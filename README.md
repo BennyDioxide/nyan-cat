@@ -3,14 +3,6 @@
 
 > 在 [https://bennyyangplaysminecraft.github.io/shooting-nyan-cat/](https://bennyyangplaysminecraft.github.io/shooting-nyan-cat/) 打開此頁面
 
-## 作為擴充功能使用
-
-可以在 MakeCode 中將此儲存庫新增為**擴充功能**。
-
-* 開啟 [https://arcade.makecode.com/](https://arcade.makecode.com/)
-* 按一下**新專案**
-* 按一下工具齒輪選單下的**擴充功能**
-* 搜索 **https://github.com/bennyyangplaysminecraft/shooting-nyan-cat** 並匯出
 
 ## 編輯此專案 ![建立狀態徽章](https://github.com/bennyyangplaysminecraft/shooting-nyan-cat/workflows/MakeCode/badge.svg)
 
