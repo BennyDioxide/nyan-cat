@@ -31,6 +31,7 @@ function dialog () {
 }
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Boss, function (sprite, otherSprite) {
     sprite.destroy(effects.fire, 500)
+    music.bigCrash.play()
     bossHealth.value += -1
     killedEnemyCount += 1
     能量計.value += 1
@@ -442,6 +443,7 @@ statusbars.onZero(StatusBarKind.Energy, function (status) {
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     scene.cameraShake(3, 500)
+    music.smallCrash.play()
     info.changeScoreBy(1)
     otherSprite.destroy(effects.spray, 500)
     killedEnemyCount += 1
@@ -449,6 +451,7 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, oth
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     scene.cameraShake(4, 500)
+    music.bigCrash.play()
     info.changeLifeBy(-1)
     otherSprite.destroy(effects.spray, 500)
 })
