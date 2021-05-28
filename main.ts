@@ -337,7 +337,10 @@ function init () {
         `
     ]
     能量計.setLabel("Energy")
+    能量計.setColor(7, 2)
+    isBossSummoned = 0
     killedEnemyCount = 0
+    可用絕招 = 0
 }
 function projectile (sprite: Sprite, vx: number, vy: number) {
     star = sprites.createProjectileFromSprite(img`
@@ -427,19 +430,17 @@ controller.combos.attachCombo("" + controller.combos.idToString(controller.combo
         絕招使用中 = 1
         projectile(up, 0, 80)
         projectile(down, 0, -80)
-        projectile(left, -80, 0)
-        projectile(right, 80, 0)
+        projectile(left, 80, 0)
+        projectile(right, -80, 0)
         projectile(左上, 80, 80)
         projectile(左下, 80, -80)
         projectile(右上, -80, 80)
         projectile(右下, -80, -80)
         絕招使用中 = 0
-        能量計.value = 0
         可用絕招 = 0
+        能量計.value += -75
+        能量計.setColor(7, 2)
     }
-})
-statusbars.onZero(StatusBarKind.Energy, function (status) {
-    status.setColor(7, 2)
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     scene.cameraShake(3, 500)
@@ -457,9 +458,9 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 })
 let enemyBullet: Sprite = null
 let 絕招使用中 = 0
-let 可用絕招 = 0
 let 敵人: Sprite = null
 let star: Sprite = null
+let 可用絕招 = 0
 let listEnemyStyle: Image[] = []
 let 右下: Sprite = null
 let 右上: Sprite = null
