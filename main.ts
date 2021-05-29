@@ -6,52 +6,48 @@ controller.A.onEvent(ControllerButtonEvent.Repeated, function () {
     projectile(nyanCat, 150, 0)
 })
 controller.combos.attachCombo(controller.combos.idToString(controller.combos.ID.B), function () {
-    if (可用絕招 == 1) {
-        絕招使用中 = 1
-        for (let index = 0; index < 1; index++) {
-            projectile(up, 0, 80)
-            projectile(down, 0, -80)
-            projectile(left, 80, 0)
-            projectile(right, -80, 0)
-        }
-        timer.after(500, function () {
-            projectile(左上, 80, 80)
-            projectile(左下, 80, -80)
-            projectile(右上, -80, 80)
-            projectile(右下, -80, -80)
-        })
-        timer.after(2000, function () {
-            projectile(up, -80, 80)
-            projectile(up, 80, 80)
-            projectile(down, -80, -80)
-            projectile(down, 80, -80)
-            projectile(left, 80, -80)
-            projectile(left, 80, 80)
-            projectile(right, -80, -80)
-            projectile(right, -80, 80)
-        })
-        timer.after(2000, function () {
-            projectile(up, 0, 80)
-            projectile(down, 0, -80)
-            projectile(left, 80, 0)
-            projectile(right, -80, 0)
-            projectile(左上, 80, 80)
-            projectile(左下, 80, -80)
-            projectile(右上, -80, 80)
-            projectile(右下, -80, -80)
-            projectile(up, 80, 80)
-            projectile(down, -80, -80)
-            projectile(down, 80, -80)
-            projectile(left, 80, -80)
-            projectile(left, 80, 80)
-            projectile(right, -80, -80)
-            projectile(right, -80, 80)
-        })
-        絕招使用中 = 0
-        可用絕招 = 0
-        能量計.value += -75
-        能量計.setColor(7, 2)
+    絕招使用中 = 1
+    for (let index = 0; index < 1; index++) {
+        projectile(up, 0, 80)
+        projectile(down, 0, -80)
+        projectile(left, 80, 0)
+        projectile(right, -80, 0)
     }
+    timer.after(500, function () {
+        projectile(左上, 80, 80)
+        projectile(左下, 80, -80)
+        projectile(右上, -80, 80)
+        projectile(右下, -80, -80)
+    })
+    timer.after(2000, function () {
+        projectile(up, -80, 80)
+        projectile(up, 80, 80)
+        projectile(down, -80, -80)
+        projectile(down, 80, -80)
+        projectile(left, 80, -80)
+        projectile(left, 80, 80)
+        projectile(right, -80, -80)
+        projectile(right, -80, 80)
+    })
+    timer.after(2000, function () {
+        projectile(up, 0, 80)
+        projectile(down, 0, -80)
+        projectile(left, 80, 0)
+        projectile(right, -80, 0)
+        projectile(左上, 80, 80)
+        projectile(左下, 80, -80)
+        projectile(右上, -80, 80)
+        projectile(右下, -80, -80)
+        projectile(up, 80, 80)
+        projectile(down, -80, -80)
+        projectile(down, 80, -80)
+        projectile(left, 80, -80)
+        projectile(left, 80, 80)
+        projectile(right, -80, -80)
+        projectile(right, -80, 80)
+    })
+    絕招使用中 = 0
+    可用絕招 = 0
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     projectile(nyanCat, 150, 0)
@@ -101,15 +97,11 @@ statusbars.onZero(StatusBarKind.EnemyHealth, function (status) {
     game.over(true, effects.confetti)
 })
 controller.combos.attachCombo("" + controller.combos.idToString(controller.combos.ID.up) + controller.combos.idToString(controller.combos.ID.up) + controller.combos.idToString(controller.combos.ID.down) + controller.combos.idToString(controller.combos.ID.down) + controller.combos.idToString(controller.combos.ID.left) + controller.combos.idToString(controller.combos.ID.left) + controller.combos.idToString(controller.combos.ID.right) + controller.combos.idToString(controller.combos.ID.right) + controller.combos.idToString(controller.combos.ID.A) + controller.combos.idToString(controller.combos.ID.B), function () {
-    if (可用絕招 == 1) {
-        絕招使用中 = 1
-        info.changeLifeBy(10)
-        music.magicWand.play()
-        絕招使用中 = 0
-        可用絕招 = 0
-        能量計.value += -100
-        能量計.setColor(7, 2)
-    }
+    絕招使用中 = 1
+    info.changeLifeBy(10)
+    music.magicWand.play()
+    絕招使用中 = 0
+    可用絕招 = 0
 })
 function init () {
     scene.setBackgroundColor(8)
@@ -438,7 +430,7 @@ let Boss已召喚 = 0
 let listEnemyStyle: Image[] = []
 let killedEnemyCount = 0
 let bossHealth: StatusBarSprite = null
-let 能量計: StatusBarSprite = null
+let 可用絕招 = 0
 let 右下: Sprite = null
 let 右上: Sprite = null
 let 左下: Sprite = null
@@ -448,9 +440,10 @@ let left: Sprite = null
 let down: Sprite = null
 let up: Sprite = null
 let 絕招使用中 = 0
-let 可用絕招 = 0
 let nyanCat: Sprite = null
+let 能量計: StatusBarSprite = null
 init()
+能量計.value = 100
 game.onUpdateInterval(1000, function () {
     if (Boss已召喚 == 0 && 絕招使用中 == 0) {
         敵人 = sprites.create(listEnemyStyle[randint(0, 5)], SpriteKind.Enemy)
