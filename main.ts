@@ -5,6 +5,54 @@ namespace SpriteKind {
 controller.A.onEvent(ControllerButtonEvent.Repeated, function () {
     projectile(nyanCat, 150, 0)
 })
+controller.combos.attachCombo(controller.combos.idToString(controller.combos.ID.B), function () {
+    if (可用絕招 == 1) {
+        絕招使用中 = 1
+        for (let index = 0; index < 1; index++) {
+            projectile(up, 0, 80)
+            projectile(down, 0, -80)
+            projectile(left, 80, 0)
+            projectile(right, -80, 0)
+        }
+        timer.after(500, function () {
+            projectile(左上, 80, 80)
+            projectile(左下, 80, -80)
+            projectile(右上, -80, 80)
+            projectile(右下, -80, -80)
+        })
+        timer.after(2000, function () {
+            projectile(up, -80, 80)
+            projectile(up, 80, 80)
+            projectile(down, -80, -80)
+            projectile(down, 80, -80)
+            projectile(left, 80, -80)
+            projectile(left, 80, 80)
+            projectile(right, -80, -80)
+            projectile(right, -80, 80)
+        })
+        timer.after(2000, function () {
+            projectile(up, 0, 80)
+            projectile(down, 0, -80)
+            projectile(left, 80, 0)
+            projectile(right, -80, 0)
+            projectile(左上, 80, 80)
+            projectile(左下, 80, -80)
+            projectile(右上, -80, 80)
+            projectile(右下, -80, -80)
+            projectile(up, 80, 80)
+            projectile(down, -80, -80)
+            projectile(down, 80, -80)
+            projectile(left, 80, -80)
+            projectile(left, 80, 80)
+            projectile(right, -80, -80)
+            projectile(right, -80, 80)
+        })
+        絕招使用中 = 0
+        可用絕招 = 0
+        能量計.value += -75
+        能量計.setColor(7, 2)
+    }
+})
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     projectile(nyanCat, 150, 0)
     能量計.value += 1
@@ -27,7 +75,7 @@ function dialog () {
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
         `)
-    game.splash("按下A鍵來擊敗他們")
+    game.splash("按下A鍵來擊敗他們", "能量條滿按B使出大招")
 }
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Boss, function (sprite, otherSprite) {
     sprite.destroy(effects.fire, 500)
@@ -36,23 +84,6 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Boss, function (sprite, othe
     killedEnemyCount += 1
     能量計.value += 1
 })
-function 判定 () {
-    if (isBossSummoned == 0 && info.score() == 32) {
-        summon("boss")
-    }
-    if (killedEnemyCount == 10) {
-        info.changeLifeBy(1)
-        killedEnemyCount = 0
-    }
-    if (isBossSummoned == 1) {
-        if (theBoss.y >= 118) {
-            theBoss.vy = randint(-80, -20)
-        }
-        if (theBoss.y < 10) {
-            theBoss.vy = randint(20, 80)
-        }
-    }
-}
 function Nyan_Cat () {
     nyanCat = sprites.create(assets.image`Nyan cat`, SpriteKind.Player)
     nyanCat.setFlag(SpriteFlag.StayInScreen, true)
@@ -68,6 +99,17 @@ function Nyan_Cat () {
 }
 statusbars.onZero(StatusBarKind.EnemyHealth, function (status) {
     game.over(true, effects.confetti)
+})
+controller.combos.attachCombo("" + controller.combos.idToString(controller.combos.ID.up) + controller.combos.idToString(controller.combos.ID.up) + controller.combos.idToString(controller.combos.ID.down) + controller.combos.idToString(controller.combos.ID.down) + controller.combos.idToString(controller.combos.ID.left) + controller.combos.idToString(controller.combos.ID.left) + controller.combos.idToString(controller.combos.ID.right) + controller.combos.idToString(controller.combos.ID.right) + controller.combos.idToString(controller.combos.ID.A) + controller.combos.idToString(controller.combos.ID.B), function () {
+    if (可用絕招 == 1) {
+        絕招使用中 = 1
+        info.changeLifeBy(10)
+        music.magicWand.play()
+        絕招使用中 = 0
+        可用絕招 = 0
+        能量計.value += -100
+        能量計.setColor(7, 2)
+    }
 })
 function init () {
     scene.setBackgroundColor(8)
@@ -338,7 +380,7 @@ function init () {
     ]
     能量計.setLabel("Energy")
     能量計.setColor(7, 2)
-    isBossSummoned = 0
+    Boss已召喚 = 0
     killedEnemyCount = 0
     可用絕招 = 0
 }
@@ -370,15 +412,59 @@ function projectile (sprite: Sprite, vx: number, vy: number) {
     true
     )
 }
-function summon (text: string) {
-    if (text == "enemy") {
+statusbars.onStatusReached(StatusBarKind.Energy, statusbars.StatusComparison.EQ, statusbars.ComparisonType.Percentage, 100, function (status) {
+    可用絕招 = 1
+    status.setColor(9, 0)
+})
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
+    scene.cameraShake(3, 500)
+    music.smallCrash.play()
+    info.changeScoreBy(1)
+    otherSprite.destroy(effects.spray, 500)
+    killedEnemyCount += 1
+    能量計.value += 1
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
+    scene.cameraShake(4, 500)
+    music.bigCrash.play()
+    info.changeLifeBy(-1)
+    otherSprite.destroy(effects.spray, 500)
+})
+let enemyBullet: Sprite = null
+let theBoss: Sprite = null
+let 敵人: Sprite = null
+let star: Sprite = null
+let Boss已召喚 = 0
+let listEnemyStyle: Image[] = []
+let killedEnemyCount = 0
+let bossHealth: StatusBarSprite = null
+let 能量計: StatusBarSprite = null
+let 右下: Sprite = null
+let 右上: Sprite = null
+let 左下: Sprite = null
+let 左上: Sprite = null
+let right: Sprite = null
+let left: Sprite = null
+let down: Sprite = null
+let up: Sprite = null
+let 絕招使用中 = 0
+let 可用絕招 = 0
+let nyanCat: Sprite = null
+init()
+game.onUpdateInterval(1000, function () {
+    if (Boss已召喚 == 0 && 絕招使用中 == 0) {
         敵人 = sprites.create(listEnemyStyle[randint(0, 5)], SpriteKind.Enemy)
         敵人.lifespan = 2500
         敵人.vx = -80
         敵人.setPosition(170, randint(10, 110))
-    } else if (text == "boss") {
+    }
+})
+forever(function () {
+    nyanCat.x = 10
+    // 召喚Boss
+    if (Boss已召喚 == 0 && info.score() == 32) {
         game.showLongText("Boss Comming", DialogLayout.Bottom)
-        isBossSummoned += 1
+        Boss已召喚 += 1
         theBoss = sprites.create(img`
             ..........666666666666..........
             ........6667777777777666........
@@ -419,72 +505,18 @@ function summon (text: string) {
         theBoss.setPosition(140, 64)
         theBoss.vy = 40
     }
-}
-statusbars.onStatusReached(StatusBarKind.Energy, statusbars.StatusComparison.EQ, statusbars.ComparisonType.Percentage, 100, function (status) {
-    可用絕招 = 1
-    status.setColor(9, 0)
-})
-// Konami Code
-controller.combos.attachCombo("" + controller.combos.idToString(controller.combos.ID.up) + controller.combos.idToString(controller.combos.ID.up) + controller.combos.idToString(controller.combos.ID.down) + controller.combos.idToString(controller.combos.ID.down) + controller.combos.idToString(controller.combos.ID.left) + controller.combos.idToString(controller.combos.ID.left) + controller.combos.idToString(controller.combos.ID.right) + controller.combos.idToString(controller.combos.ID.right) + controller.combos.idToString(controller.combos.ID.B) + controller.combos.idToString(controller.combos.ID.A), function () {
-    if (可用絕招 == 1) {
-        絕招使用中 = 1
-        projectile(up, 0, 80)
-        projectile(down, 0, -80)
-        projectile(left, 80, 0)
-        projectile(right, -80, 0)
-        projectile(左上, 80, 80)
-        projectile(左下, 80, -80)
-        projectile(右上, -80, 80)
-        projectile(右下, -80, -80)
-        絕招使用中 = 0
-        可用絕招 = 0
-        能量計.value += -75
-        能量計.setColor(7, 2)
+    if (killedEnemyCount == 10) {
+        info.changeLifeBy(1)
+        killedEnemyCount = 0
     }
-})
-sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
-    scene.cameraShake(3, 500)
-    music.smallCrash.play()
-    info.changeScoreBy(1)
-    otherSprite.destroy(effects.spray, 500)
-    killedEnemyCount += 1
-    能量計.value += 1
-})
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
-    scene.cameraShake(4, 500)
-    music.bigCrash.play()
-    info.changeLifeBy(-1)
-    otherSprite.destroy(effects.spray, 500)
-})
-let enemyBullet: Sprite = null
-let 絕招使用中 = 0
-let 敵人: Sprite = null
-let star: Sprite = null
-let 可用絕招 = 0
-let listEnemyStyle: Image[] = []
-let 右下: Sprite = null
-let 右上: Sprite = null
-let 左下: Sprite = null
-let 左上: Sprite = null
-let right: Sprite = null
-let left: Sprite = null
-let down: Sprite = null
-let up: Sprite = null
-let theBoss: Sprite = null
-let isBossSummoned = 0
-let killedEnemyCount = 0
-let bossHealth: StatusBarSprite = null
-let 能量計: StatusBarSprite = null
-let nyanCat: Sprite = null
-init()
-game.onUpdateInterval(1000, function () {
-    if (isBossSummoned == 0 && 絕招使用中 == 0) {
-        summon("enemy")
+    if (Boss已召喚 == 1) {
+        if (theBoss.y >= 118) {
+            theBoss.vy = randint(-80, -20)
+        }
+        if (theBoss.y < 10) {
+            theBoss.vy = randint(20, 80)
+        }
     }
-})
-forever(function () {
-    nyanCat.x = 10
-    判定()
 })
 game.onUpdateInterval(200, function () {
     if (info.score() >= 32 && Math.percentChance(50)) {
